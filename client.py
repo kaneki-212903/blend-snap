@@ -26,7 +26,7 @@ if uploaded_files:
     st.write(f"Total images uploaded and saved: {len(uploaded_files)}")'''
     
 # Example Usage
-image_paths = glob.glob("images/*.png")
+image_paths = glob.glob("images/*.png") + glob.glob("images/*.jpg")
 for i in range(len(image_paths)):
     image_paths[i] = image_paths[i].replace("\\", "/")
 print(image_paths)
@@ -47,15 +47,18 @@ if image_paths:
     #st.image(visualization, caption="Average Face and Input Images", use_column_width=True)
 
     #face_to_be_checked=randrange(no_paths)
-    face_to_be_checked=[0,1,2,3,4,5,6,7]
-    print("Yeh wali dikhani h :",face_to_be_checked)
-    scores=[]
+    # Dynamically set face_to_be_checked based on the number of images
+    face_to_be_checked = list(range(len(image_paths)))
+    print("Yeh wali dikhani h :", face_to_be_checked)
+
+    scores = []
     for i in face_to_be_checked:
-        score=face_averager.calculate_handsomeness_index(image_paths[i])
+        score = face_averager.calculate_handsomeness_index(image_paths[i])
         scores.append(score)
+
     print("Itne sundar hooo tum: ")
-    for i in scores:
-        print("Yeh score h {scores.index}",i)
+    for i, score in enumerate(scores):
+        print(f"Yeh score h {i}: {score}")
 
     #Delete images after processing
     for path in image_paths:
