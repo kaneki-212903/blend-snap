@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Averager</title>
+</head>
+<body>
+    <h1>Upload Images for Average Face Generation</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="images" accept="image/png, image/jpeg" multiple>
+        <button type="submit">Upload Images</button>
+    </form>
+
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData();
+            const imageFiles = document.getElementById('imageInput').files;
+            
+            for (let i = 0; i < imageFiles.length; i++) {
+                formData.append('images', imageFiles[i]);
+            }
+
+            // Send the images to the Streamlit backend
+            const response = await fetch('http://localhost:8501/upload', {  // Assuming Streamlit runs on port 8501
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('output').innerHTML = `<h3>Average Face Generated</h3>
+                    <img src="${result.average_face}" alt="Average Face" />
+                    <h4>Handsomeness Scores</h4>
+                    <ul>
+                        ${result.scores.map((score, i) => `<li>Image ${i+1}: ${score}</li>`).join('')}
+                    </ul>`;
+            } else {
+                alert("Error processing the images. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
